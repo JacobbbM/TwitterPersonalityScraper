@@ -65,6 +65,11 @@ Following this skill **is** your opt-in to multi-agent orchestration — call th
 tool. Concurrency is capped at ~min(16, cores−2), so 12 lenses run genuinely in parallel.
 Agents need to inherit the session model, don't set them an inferior model.
 
+> **Set the handle as a literal — don't trust `args`.** Hardcode `H` to the scraped handle in
+> the script. The `args` global has been observed arriving `undefined` for inline scripts, which
+> silently rewrites every corpus path to `analysis/undefined/…` and analyzes nothing. The guard
+> in the snippet below fails the run fast if the handle is unset, so it never proceeds blind.
+
 ```js
 export const meta = {
   name: 'creator-dossier',
@@ -77,11 +82,21 @@ export const meta = {
   ],
 }
 
-const H = args.handle                       // pass via Workflow `args: { handle: "<handle>" }`
+// HANDLE — hardcode the scraped handle as a STRING LITERAL. Do NOT depend on the `args`
+// global being populated: for inline scripts it can arrive `undefined`, which silently turns
+// every path into `analysis/undefined/...` and runs the whole pipeline on nothing. The guard
+// converts that silent corruption into a loud, immediate failure before any agent spawns.
+const H = (typeof args !== 'undefined' && args && args.handle) || 'PUT_HANDLE_HERE'
+if (!H || H === 'PUT_HANDLE_HERE' || String(H).includes('undefined')) {
+  throw new Error('Set H to the scraped handle before launching — args.handle was empty.')
+}
 const DIR = `analysis/${H}`
 const CORPORA = `Read these files first: ${DIR}/stats.md, ${DIR}/corpus_resonated.txt, `
   + `${DIR}/corpus_ignored.txt, ${DIR}/corpus_replies.txt, ${DIR}/corpus_qrts.txt, `
-  + `${DIR}/corpus_voice.txt.\nRULE: reason in LIKE-RATE (likes per 1k views = resonance), `
+  + `${DIR}/corpus_voice.txt.\n`
+  + `If any path is missing or contains "undefined", run \`ls analysis/\` and read the single `
+  + `<handle> directory present instead — never analyze placeholder or empty paths.\n`
+  + `RULE: reason in LIKE-RATE (likes per 1k views = resonance), `
   + `NOT raw views (reach). Cite real posts with their numbers for every claim.`
 
 // Each lens returns this shape (build it as a JSON Schema for opts.schema):
@@ -243,6 +258,7 @@ inline the lib source into a `<script>` block instead.
 ## 9. Checklist
 
 - [ ] `pnpm enrich <handle>` ran; `analysis/<handle>/` populated
+- [ ] Handle **hardcoded** in the script (guard present) — confirmed **no `analysis/undefined/`** path in any agent prompt
 - [ ] Launched the workflow (or manual fan-out) with **12+ distinct lenses**, all reading all corpora
 - [ ] Every agent prompt carried the **like-rate (resonance) rule**
 - [ ] Adversarial **critique** pass ran before synthesis

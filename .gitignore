@@ -1,0 +1,12 @@
+node_modules/
+output/
+.env
+*.log
+.DS_Store
+
+# Playwright
+/test-results/
+/playwright-report/
+
+# Secrets — the REAL cookie jar must never be committed
+/auth/cookies.json

@@ -1,0 +1,41 @@
+[
+  {
+    "name": "auth_token",
+    "value": "<your auth_token cookie>",
+    "domain": ".x.com",
+    "path": "/",
+    "secure": true,
+    "httpOnly": true,
+    "sameSite": "None",
+    "expires": "2027-05-03T21:19:49.220Z"
+  },
+  {
+    "name": "ct0",
+    "value": "<your ct0 cookie>",
+    "domain": ".x.com",
+    "path": "/",
+    "secure": true,
+    "httpOnly": false,
+    "sameSite": "Lax",
+    "expires": "2027-05-03T21:19:49.487Z"
+  },
+  {
+    "name": "twid",
+    "value": "u%3D<your numeric user id>",
+    "domain": ".x.com",
+    "path": "/",
+    "secure": true,
+    "httpOnly": false,
+    "sameSite": "None",
+    "expires": "2027-06-24T00:09:32.896Z"
+  },
+  {
+    "name": "lang",
+    "value": "en",
+    "domain": ".x.com",
+    "path": "/",
+    "secure": false,
+    "httpOnly": false,
+    "sameSite": "Lax"
+  }
+]

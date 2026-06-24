@@ -6,6 +6,7 @@
   "description": "Scrapes a Twitter/X account's tweets + replies via an authenticated Chromium session (feasibility test).",
   "scripts": {
     "scrape": "tsx src/index.ts",
+    "enrich": "tsx src/enrich.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
